@@ -21,6 +21,8 @@ import {
   ModalFooter,
   Badge,
   Spinner,
+  Flex,
+  Box,
 } from "@chakra-ui/react";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import axios from "axios";
@@ -99,7 +101,7 @@ const OrchidTable = () => {
 
   const handleSave = async () => {
     const form = {
-      name: document.getElementById("orchid-name").value,
+      orchidName: document.getElementById("orchid-name").value,
       description: document.getElementById("orchid-description").value,
       category: document.getElementById("orchid-category").value,
       isNatural: document.getElementById("orchid-isNatural").checked,
@@ -122,62 +124,68 @@ const OrchidTable = () => {
 
   return (
     <div>
-      <Button onClick={onOpen} colorScheme="blue" mb={4}>
-        Add New Orchid
-      </Button>
+      <Flex justify="flex-end" mb={4} mr={20}>
+        <Button onClick={onOpen} colorScheme="blue">
+          Add New Orchid
+        </Button>
+      </Flex>
 
-      <Table variant="simple">
-        <Thead>
-          <Tr>
-            <Th>Name</Th>
-            <Th>Description</Th>
-            <Th>Category</Th>
-            <Th>isNatural</Th>
-            <Th>Image</Th>
-            <Th>Actions</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {orchids.map((orchid) => (
-            <Tr key={orchid.id}>
-              <Td>{orchid.name}</Td>
-              <Td>{orchid.description}</Td>
-              <Td>{orchid.category}</Td>
-              <Td>
-                {orchid.isNatural ? (
-                  <Badge colorScheme="green">Natural</Badge>
-                ) : (
-                  <Badge colorScheme="red">Not Natural</Badge>
-                )}
-              </Td>
-              <Td>
-                {orchid.image ? (
-                  <img
-                    src={orchid.image}
-                    alt={orchid.name}
-                    width="50"
-                    height="50"
-                  />
-                ) : (
-                  "No image"
-                )}
-              </Td>
-              <Td>
-                <IconButton
-                  icon={<EditIcon />}
-                  onClick={() => handleEdit(orchid)}
-                  mr={2}
-                />
-                <IconButton
-                  icon={<DeleteIcon />}
-                  colorScheme="red"
-                  onClick={() => handleDelete(orchid.id)}
-                />
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
+      <Flex justify="center">
+        <Box w="80%" mb={100}>
+          <Table variant="simple">
+            <Thead>
+              <Tr>
+                <Th>Name</Th>
+                <Th>Description</Th>
+                <Th>Category</Th>
+                <Th>isNatural</Th>
+                <Th>Image</Th>
+                <Th>Actions</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {orchids.map((orchid) => (
+                <Tr key={orchid.id}>
+                  <Td>{orchid.orchidName}</Td>
+                  <Td>{orchid.description}</Td>
+                  <Td>{orchid.category}</Td>
+                  <Td>
+                    {orchid.isNatural ? (
+                      <Badge colorScheme="green">Natural</Badge>
+                    ) : (
+                      <Badge colorScheme="red">Not Natural</Badge>
+                    )}
+                  </Td>
+                  <Td>
+                    {orchid.image ? (
+                      <img
+                        src={orchid.image}
+                        alt={orchid.orchidName}
+                        width="50"
+                        height="50"
+                      />
+                    ) : (
+                      "No image"
+                    )}
+                  </Td>
+                  <Td>
+                    <IconButton
+                      icon={<EditIcon />}
+                      onClick={() => handleEdit(orchid)}
+                      mr={2}
+                    />
+                    <IconButton
+                      icon={<DeleteIcon />}
+                      colorScheme="red"
+                      onClick={() => handleDelete(orchid.id)}
+                    />
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </Box>
+      </Flex>
 
       {/* Modal for Add/Edit Orchid */}
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -191,7 +199,7 @@ const OrchidTable = () => {
               <FormLabel>Name</FormLabel>
               <Input
                 id="orchid-name"
-                defaultValue={selectedOrchid?.name || ""}
+                defaultValue={selectedOrchid?.orchidName || ""}
               />
             </FormControl>
             <FormControl mb={4}>
