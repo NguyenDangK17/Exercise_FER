@@ -11,6 +11,8 @@ import SignupPage from "./pages/SignupPage";
 import Navbar from "./components/Navar";
 import Footer from "./components/Footer";
 import Add from "./components/Add";
+import OrchidTable from "./pages/OrchidManagement";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 // import Loader from "./components/Loader";
 // const HomePage = lazy(() => import("./pages/HomePage"));
@@ -23,6 +25,7 @@ import Add from "./components/Add";
 // const Footer = lazy(() => import("./components/Footer"));
 
 function App() {
+  const queryClient = new QueryClient();
   return (
     <>
       {/* <Suspense fallback={<Loader />}> */}
@@ -35,7 +38,14 @@ function App() {
         <Route path="/natural" element={<NaturalPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        <Route path="/add" element={<Add />} />
+        <Route
+          path="/add"
+          element={
+            <QueryClientProvider client={queryClient}>
+              <OrchidTable />
+            </QueryClientProvider>
+          }
+        />
       </Routes>
       <Footer />
       {/* </Suspense> */}
