@@ -131,7 +131,8 @@ export default function HomePage() {
                   justifyContent="space-around"
                   border="none"
                   bg="none"
-                  onClick={() => handleOpenModal(orchid)}
+                  // onClick={() => handleOpenModal(orchid)}
+                  onClick={() => navigation(`/detail/${orchid.id}`)}
                 >
                   View more
                 </Button>

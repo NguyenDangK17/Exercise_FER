@@ -32,6 +32,18 @@ export default function List() {
 
   return (
     <>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        // m={4}
+        mr={10}
+      >
+        <Box />
+        <Button onClick={() => navigation("/add")} colorScheme="teal">
+          Add Orchid
+        </Button>
+      </Box>
       <SimpleGrid minChildWidth={325} spacing={5} m={10}>
         {specialOrchids.map((orchid) => (
           <Box

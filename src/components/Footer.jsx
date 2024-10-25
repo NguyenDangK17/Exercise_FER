@@ -35,8 +35,8 @@ export default function Footer() {
             OrchidShop
           </Heading>
           <Text fontSize="sm" mb={4}>
-            Creating solutions for a better tomorrow. OrchidShop is committed
-            to providing the best products and services to empower your journey.
+            Creating solutions for a better tomorrow. OrchidShop is committed to
+            providing the best products and services to empower your journey.
           </Text>
           <Stack direction="row" spacing={4}>
             <IconButton

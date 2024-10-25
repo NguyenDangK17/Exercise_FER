@@ -209,9 +209,9 @@ const LoginPage = () => {
                         <FormErrorMessage>
                           {form.errors.password}
                         </FormErrorMessage>
-                        <FormHelperText textAlign="right">
+                        {/* <FormHelperText textAlign="right">
                           <Link>Forgot password?</Link>
-                        </FormHelperText>
+                        </FormHelperText> */}
                       </FormControl>
                     )}
                   </Field>

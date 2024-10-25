@@ -131,7 +131,7 @@ const OrchidTable = () => {
       </Flex>
 
       <Flex justify="center">
-        <Box w="80%" mb={100}>
+        <Box w="90%" mb={100} borderWidth="1px" borderRadius={10} p={4}>
           <Table variant="simple">
             <Thead>
               <Tr>
