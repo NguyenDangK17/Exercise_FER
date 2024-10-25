@@ -138,7 +138,10 @@ const Navbar = () => {
                 >
                   Sign In
                 </Button>
-                <Button colorScheme="teal" onClick={() => navigation("/signup")}>
+                <Button
+                  colorScheme="teal"
+                  onClick={() => navigation("/signup")}
+                >
                   Sign Up
                 </Button>
               </>
@@ -152,14 +155,40 @@ const Navbar = () => {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerHeader>
-            <Text fontSize="lg" fontWeight="bold">Menu</Text>
+            <Text fontSize="lg" fontWeight="bold">
+              Menu
+            </Text>
           </DrawerHeader>
           <DrawerBody>
             <Flex direction="column" gap={4}>
-              <Text onClick={() => navigation("/")} fontWeight="bold" style={{ cursor: "pointer" }}>Home</Text>
-              <Text onClick={() => navigation("/natural")} fontWeight="bold" style={{ cursor: "pointer" }}>Natural</Text>
-              <Text onClick={() => navigation("/contact")} fontWeight="bold" style={{ cursor: "pointer" }}>Contact</Text>
-              <Text onClick={() => navigation("/about")} fontWeight="bold" style={{ cursor: "pointer" }}>About Us</Text>
+              <Text
+                onClick={() => navigation("/")}
+                fontWeight="bold"
+                style={{ cursor: "pointer" }}
+              >
+                Home
+              </Text>
+              <Text
+                onClick={() => navigation("/natural")}
+                fontWeight="bold"
+                style={{ cursor: "pointer" }}
+              >
+                Natural
+              </Text>
+              <Text
+                onClick={() => navigation("/contact")}
+                fontWeight="bold"
+                style={{ cursor: "pointer" }}
+              >
+                Contact
+              </Text>
+              <Text
+                onClick={() => navigation("/about")}
+                fontWeight="bold"
+                style={{ cursor: "pointer" }}
+              >
+                About Us
+              </Text>
             </Flex>
           </DrawerBody>
           <DrawerFooter>
@@ -172,13 +201,28 @@ const Navbar = () => {
                 size="md"
               />
               {user ? (
-                <Button colorScheme="red" variant="outline" onClick={handleLogout}>
+                <Button
+                  colorScheme="red"
+                  variant="outline"
+                  onClick={handleLogout}
+                >
                   Log Out
                 </Button>
               ) : (
                 <>
-                  <Button colorScheme="teal" variant="outline" onClick={() => navigation("/login")}>Sign In</Button>
-                  <Button colorScheme="teal" onClick={() => navigation("/signup")}>Sign Up</Button>
+                  <Button
+                    colorScheme="teal"
+                    variant="outline"
+                    onClick={() => navigation("/login")}
+                  >
+                    Sign In
+                  </Button>
+                  <Button
+                    colorScheme="teal"
+                    onClick={() => navigation("/signup")}
+                  >
+                    Sign Up
+                  </Button>
                 </>
               )}
             </Flex>

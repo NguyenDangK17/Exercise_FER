@@ -67,7 +67,7 @@ export default function DetailPage() {
                 {orchidt.category} &bull; {orchidt.origin}
               </Box>
               <Badge borderRadius="full" px="2" colorScheme="teal">
-                {orchidt.isSpecial === true ? "Natural" : ""}
+                {orchidt.isNatural === true ? "Natural" : ""}
               </Badge>
             </Box>
             <Box
@@ -116,6 +116,16 @@ export default function DetailPage() {
             </HStack>
           </Box>
         </Box>
+
+        {/* <Box mt="4">
+          <video width="100%" controls>
+            <source
+              src="https://www.youtube.com/watch?v=3k3l0NTv3Bk"
+              type="video/mp4"
+            />
+            Your browser does not support the video tag.
+          </video>
+        </Box> */}
       </VStack>
     </Box>
   );

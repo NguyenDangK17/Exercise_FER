@@ -1,12 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Orchids } from "../assets/ListOfOrchids";
 import { Box, Badge, Image, SimpleGrid, Button } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+const baseUrl = "https://6693578bc6be000fa07af327.mockapi.io/orchid";
 
 export default function List() {
   const navigation = useNavigate();
-  const specialOrchids = Orchids.filter((orchid) => orchid.isSpecial === true);
+
+  const [orchids, setOrchids] = useState([]);
+
+  useEffect(() => {
+    const fetchOrchid = async () => {
+      await axios
+        .get(baseUrl)
+        .then((res) => {
+          setOrchids(res.data);
+          console.log("Fetch Orchid successfully");
+        })
+        .catch((err) => console.log(err.message));
+    };
+
+    fetchOrchid();
+  }, []);
+
+  const specialOrchids = orchids.filter((orchid) => orchid.isNatural === true);
+
+  console.log("XAXA: ", specialOrchids);
 
   return (
     <>

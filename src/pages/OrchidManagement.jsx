@@ -101,8 +101,8 @@ const OrchidTable = () => {
 
   const handleSave = async () => {
     const form = {
-      orchidName: document.getElementById("orchid-name").value,
-      description: document.getElementById("orchid-description").value,
+      name: document.getElementById("orchid-name").value,
+      origin: document.getElementById("orchid-origin").value,
       category: document.getElementById("orchid-category").value,
       isNatural: document.getElementById("orchid-isNatural").checked,
       image: await handleImageUpload(),
@@ -120,7 +120,7 @@ const OrchidTable = () => {
     setImageFile(null);
   };
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <Spinner my={300} size={30} />;
 
   return (
     <div>
@@ -135,32 +135,23 @@ const OrchidTable = () => {
           <Table variant="simple">
             <Thead>
               <Tr>
-                <Th>Name</Th>
-                <Th>Description</Th>
-                <Th>Category</Th>
-                <Th>isNatural</Th>
                 <Th>Image</Th>
-                <Th>Actions</Th>
+                <Th>Name</Th>
+                {/* <Th>Description</Th> */}
+                <Th>Category</Th>
+                <Th>Origin</Th>
+                <Th>Natural</Th>
+                <Th>Action</Th>
               </Tr>
             </Thead>
             <Tbody>
               {orchids.map((orchid) => (
                 <Tr key={orchid.id}>
-                  <Td>{orchid.orchidName}</Td>
-                  <Td>{orchid.description}</Td>
-                  <Td>{orchid.category}</Td>
-                  <Td>
-                    {orchid.isNatural ? (
-                      <Badge colorScheme="green">Natural</Badge>
-                    ) : (
-                      <Badge colorScheme="red">Not Natural</Badge>
-                    )}
-                  </Td>
                   <Td>
                     {orchid.image ? (
                       <img
                         src={orchid.image}
-                        alt={orchid.orchidName}
+                        alt={orchid.name}
                         width="50"
                         height="50"
                       />
@@ -168,6 +159,18 @@ const OrchidTable = () => {
                       "No image"
                     )}
                   </Td>
+                  <Td>{orchid.name}</Td>
+                  {/* <Td>{orchid.description}</Td> */}
+                  <Td>{orchid.category}</Td>
+                  <Td>{orchid.origin}</Td>
+                  <Td>
+                    {orchid.isNatural ? (
+                      <Badge colorScheme="green">Natural</Badge>
+                    ) : (
+                      <Badge colorScheme="red">Not Natural</Badge>
+                    )}
+                  </Td>
+
                   <Td>
                     <IconButton
                       icon={<EditIcon />}
@@ -199,16 +202,16 @@ const OrchidTable = () => {
               <FormLabel>Name</FormLabel>
               <Input
                 id="orchid-name"
-                defaultValue={selectedOrchid?.orchidName || ""}
+                defaultValue={selectedOrchid?.name || ""}
               />
             </FormControl>
-            <FormControl mb={4}>
+            {/* <FormControl mb={4}>
               <FormLabel>Description</FormLabel>
               <Input
                 id="orchid-description"
                 defaultValue={selectedOrchid?.description || ""}
               />
-            </FormControl>
+            </FormControl> */}
             <FormControl mb={4}>
               <FormLabel>Category</FormLabel>
               <Input
@@ -216,7 +219,14 @@ const OrchidTable = () => {
                 defaultValue={selectedOrchid?.category || ""}
               />
             </FormControl>
-            <FormControl display="flex" alignItems="center" mb={4}>
+            <FormControl mb={4}>
+              <FormLabel>Origin</FormLabel>
+              <Input
+                id="orchid-origin"
+                defaultValue={selectedOrchid?.origin || ""}
+              />
+            </FormControl>
+            <FormControl display="flex" alignItems="center" my={8}>
               <FormLabel htmlFor="orchid-isNatural" mb="0">
                 Is Natural?
               </FormLabel>

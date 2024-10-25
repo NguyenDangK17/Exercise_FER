@@ -92,7 +92,7 @@ export default function HomePage() {
                   {orchid.category} &bull; {orchid.origin}
                 </Box>
                 <Badge borderRadius="full" px="2" colorScheme="teal">
-                  {orchid.isSpecial === true ? "Natural" : ""}
+                  {orchid.isNatural === true ? "Natural" : ""}
                 </Badge>
               </Box>
 
