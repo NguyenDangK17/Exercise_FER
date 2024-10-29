@@ -60,7 +60,8 @@ const SignupPage = () => {
             var registerUser = {
               email: decoded.email,
               name: decoded.name,
-              picture: decoded.picture,
+              avatar: decoded.picture,
+              role: "user",
             };
             axios
               .post(
@@ -76,7 +77,7 @@ const SignupPage = () => {
               .catch((err) => {
                 console.log("Error: ", err.response);
               });
-            sessionStorage.setItem("loginUserId", newUserId);
+            sessionStorage.setItem("loginUserId", decoded.name);
           }
         })
         .catch((err) => console.log(err));

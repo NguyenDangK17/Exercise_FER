@@ -42,7 +42,7 @@ export default function HomePage() {
 
   return (
     <>
-      <Box
+      {/* <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
@@ -53,7 +53,7 @@ export default function HomePage() {
         <Button onClick={() => navigation("/add")} colorScheme="teal">
           Add Orchid
         </Button>
-      </Box>
+      </Box> */}
       <SimpleGrid minChildWidth={325} spacing={5} m={10}>
         {orchids.map((orchid) => (
           <Box

@@ -2,19 +2,14 @@ import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
-// import HomePage from "./pages/HomePage";
-// import AboutPage from "./pages/AboutPage";
-// import ContactPage from "./pages/ContactPage";
-// import DetailPage from "./pages/DetailPage";
-// import NaturalPage from "./pages/NaturalPage";
-// import LoginPage from "./pages/LoginPage";
-// import SignupPage from "./pages/SignupPage";
+
 import Navbar from "./components/Navar";
 import Footer from "./components/Footer";
-// import OrchidTable from "./pages/OrchidManagement";
 import NotFoundPage from "./pages/NotFoundPage";
-
 import Loader from "./components/Loader";
+import ProtectedRoute from "./components/ProtectedRoute";
+import NotAuthorized from "./pages/NotAuthorized";
+
 const HomePage = lazy(() => import("./pages/HomePage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
@@ -23,14 +18,17 @@ const NaturalPage = lazy(() => import("./pages/NaturalPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const SignupPage = lazy(() => import("./pages/SignupPage"));
 const OrchidTable = lazy(() => import("./pages/OrchidManagement"));
+const AdminPage = lazy(() => import("./pages/AdminPage"));
 
 function App() {
   const queryClient = new QueryClient();
+  const user = sessionStorage.getItem("roleUser");
   return (
     <>
       <Suspense fallback={<Loader />}>
         <Navbar />
         <Routes>
+          <Route path="/not-authorized" element={<NotAuthorized />} />
           <Route path="*" element={<NotFoundPage />} />
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
@@ -40,11 +38,13 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route
-            path="/add"
+            path="/admin"
             element={
-              <QueryClientProvider client={queryClient}>
-                <OrchidTable />
-              </QueryClientProvider>
+              <ProtectedRoute user={user}>
+                <QueryClientProvider client={queryClient}>
+                  <OrchidTable />
+                </QueryClientProvider>
+              </ProtectedRoute>
             }
           />
         </Routes>

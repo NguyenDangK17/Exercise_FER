@@ -59,7 +59,8 @@ const LoginPage = () => {
             var registerUser = {
               email: decoded.email,
               name: decoded.name,
-              picture: decoded.picture,
+              avatar: decoded.picture,
+              role: "user",
             };
             axios
               .post(
@@ -75,7 +76,7 @@ const LoginPage = () => {
               .catch((err) => {
                 console.log("Error: ", err.response);
               });
-            sessionStorage.setItem("loginUserId", newUserId);
+            sessionStorage.setItem("loginUserId", decoded.name);
           }
         })
         .catch((err) => console.log(err));
@@ -105,6 +106,7 @@ const LoginPage = () => {
       if (user) {
         console.log("Login successful: ", user);
         sessionStorage.setItem("loginUserId", user.name);
+        sessionStorage.setItem("roleUser", user.role);
         setTimeout(() => {
           window.location.href = "/";
         }, 1000);

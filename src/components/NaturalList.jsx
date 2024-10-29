@@ -28,11 +28,9 @@ export default function List() {
 
   const specialOrchids = orchids.filter((orchid) => orchid.isNatural === true);
 
-  console.log("XAXA: ", specialOrchids);
-
   return (
     <>
-      <Box
+      {/* <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
@@ -43,7 +41,7 @@ export default function List() {
         <Button onClick={() => navigation("/add")} colorScheme="teal">
           Add Orchid
         </Button>
-      </Box>
+      </Box> */}
       <SimpleGrid minChildWidth={325} spacing={5} m={10}>
         {specialOrchids.map((orchid) => (
           <Box
