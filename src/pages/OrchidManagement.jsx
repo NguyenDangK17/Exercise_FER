@@ -100,12 +100,16 @@ const OrchidTable = () => {
   };
 
   const handleSave = async () => {
+    const uploadedImageUrl = imageFile
+      ? await handleImageUpload()
+      : selectedOrchid?.image;
+
     const form = {
       name: document.getElementById("orchid-name").value,
       origin: document.getElementById("orchid-origin").value,
       category: document.getElementById("orchid-category").value,
       isNatural: document.getElementById("orchid-isNatural").checked,
-      image: await handleImageUpload(),
+      image: uploadedImageUrl,
     };
 
     if (isEditing) {

@@ -12,6 +12,7 @@ import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navar";
 import Footer from "./components/Footer";
 // import OrchidTable from "./pages/OrchidManagement";
+import NotFoundPage from "./pages/NotFoundPage";
 
 import Loader from "./components/Loader";
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -30,6 +31,7 @@ function App() {
       <Suspense fallback={<Loader />}>
         <Navbar />
         <Routes>
+          <Route path="*" element={<NotFoundPage />} />
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
