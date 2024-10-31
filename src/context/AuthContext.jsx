@@ -1,11 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loginError, setLoginError] = useState(""); // Track login errors
+  const [loginError, setLoginError] = useState("");
 
   const login = async (values) => {
     try {
@@ -19,15 +18,13 @@ export const AuthProvider = ({ children }) => {
 
       if (user) {
         setUser(user);
-        sessionStorage.setItem("loginUserId", user.name);
-        sessionStorage.setItem("roleUser", user.role);
+        sessionStorage.setItem("loginUserId", JSON.stringify(user));
         return { success: true };
       } else {
         setLoginError("Username or password is incorrect.");
         return { success: false };
       }
     } catch (error) {
-      console.log("Login error: ", error);
       setLoginError("An unexpected error occurred. Please try again.");
       return { success: false };
     }
@@ -36,18 +33,17 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     sessionStorage.removeItem("loginUserId");
-    sessionStorage.removeItem("roleUser");
   };
 
   useEffect(() => {
     const savedUser = sessionStorage.getItem("loginUserId");
     if (savedUser) {
-      setUser({ name: savedUser });
+      setUser(JSON.parse(savedUser));
     }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loginError }}>
+    <AuthContext.Provider value={{ user, login, logout, loginError, setUser }}>
       {children}
     </AuthContext.Provider>
   );

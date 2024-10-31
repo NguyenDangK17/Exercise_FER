@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Orchids } from "../assets/ListOfOrchids";
 import {
   Box,
   Image,
@@ -17,6 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
 import { useAuth } from "../context/AuthContext";
+import axios from "axios";
 
 export default function DetailPage() {
   const { id } = useParams();
@@ -25,12 +25,19 @@ export default function DetailPage() {
   const [feedback, setFeedback] = useState("");
   const [submittedFeedback, setSubmittedFeedback] = useState(false);
   const toast = useToast();
+  const [orchidt, setOrchidt] = useState(null);
 
-  console.log("Current: ", user);
+  useEffect(() => {
+    const fetchOrchid = async () => {
+      const response = await fetch(
+        `https://6693578bc6be000fa07af327.mockapi.io/orchid/${id}`
+      );
+      const data = await response.json();
+      setOrchidt(data);
+    };
 
-  const orchidt = Orchids.find(
-    (orchid) => parseInt(orchid.id) === parseInt(id)
-  );
+    fetchOrchid();
+  }, [id]);
 
   if (!orchidt) {
     return (
@@ -46,9 +53,9 @@ export default function DetailPage() {
   }
 
   // Check if the user has already submitted feedback for this orchid
-  const userFeedback = orchidt.feedbacks?.find((f) => f.userId === user?.id);
+  const userFeedback = orchidt.feedbacks?.find((f) => f.authorId === user?.id);
 
-  const handleFeedbackSubmit = () => {
+  const handleFeedbackSubmit = async () => {
     if (!feedback.trim()) {
       toast({
         title: "Feedback cannot be empty",
@@ -59,19 +66,53 @@ export default function DetailPage() {
       return;
     }
 
-    // Simulate feedback submission
-    orchidt.feedbacks = [
-      ...(orchidt.feedbacks || []),
-      { userId: user.id, feedback },
-    ];
-    setSubmittedFeedback(true);
+    const newFeedback = {
+      rating: 5,
+      authorId: user.id,
+      author: user.name,
+      comment: feedback,
+      date: new Date().toISOString(),
+    };
 
-    toast({
-      title: "Feedback submitted!",
-      status: "success",
-      duration: 2000,
-      isClosable: true,
-    });
+    try {
+      // Fetch the current orchid data to get existing details and feedbacks
+      const { data: currentOrchid } = await axios.get(
+        `https://6693578bc6be000fa07af327.mockapi.io/orchid/${id}`
+      );
+
+      // Prepare updated data with new feedback
+      const updatedOrchid = {
+        ...currentOrchid,
+        feedbacks: [...(currentOrchid.feedbacks || []), newFeedback],
+      };
+
+      // Send the updated orchid data via PUT request
+      const response = await axios.put(
+        `https://6693578bc6be000fa07af327.mockapi.io/orchid/${id}`,
+        updatedOrchid,
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      // Update local orchid state with the response data
+      setOrchidt(response.data);
+      setSubmittedFeedback(true);
+      setFeedback(""); // Clear the input field
+
+      toast({
+        title: "Feedback submitted!",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: "Error submitting feedback",
+        description: error.message,
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    }
   };
 
   return (

@@ -34,7 +34,7 @@ const LoginSchema = Yup.object().shape({
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const { login, loginError } = useAuth(); // Access login and loginError from AuthContext
+  const { login, loginError, setUser } = useAuth();
 
   const handleShowClick = () => setShowPassword(!showPassword);
 
@@ -49,54 +49,50 @@ const LoginPage = () => {
   };
 
   const onGoogleSuccess = async (credentialResponse) => {
-    var decoded;
+    let decoded;
     if (credentialResponse.credential) {
       decoded = jwtDecode(credentialResponse.credential);
-      console.log(
-        "SIGNIN SUCCESSFULLY. Google login user's email:",
-        decoded.email
-      );
 
-      await fetch("https://6693578bc6be000fa07af327.mockapi.io/account")
-        .then((res) => res.json())
-        .then((data) => {
-          var foundUserByEmail = data.find(
-            (account) => account.email === decoded.email
+      await axios
+        .get("https://6693578bc6be000fa07af327.mockapi.io/account")
+        .then((response) => {
+          const users = response.data;
+          const existingUser = users.find(
+            (user) => user.email === decoded.email
           );
-          if (foundUserByEmail) {
-            sessionStorage.setItem("loginUserId", foundUserByEmail.name);
+
+          if (existingUser) {
+            setUser(existingUser);
+            sessionStorage.setItem("loginUserId", JSON.stringify(existingUser));
           } else {
-            var registerUser = {
+            const newUser = {
               email: decoded.email,
               name: decoded.name,
               avatar: decoded.picture,
               role: "user",
             };
+
             axios
               .post(
                 "https://6693578bc6be000fa07af327.mockapi.io/account",
-                registerUser
+                newUser
               )
-              .then(() => {
-                console.log(
-                  "A new account has been created by email ",
-                  decoded.email
+              .then((response) => {
+                setUser(response.data); // Set the newly created user in AuthContext
+                sessionStorage.setItem(
+                  "loginUserId",
+                  JSON.stringify(response.data)
                 );
-              })
-              .catch((err) => {
-                console.log("Error: ", err.response);
               });
-            sessionStorage.setItem("loginUserId", decoded.name);
           }
-        })
-        .catch((err) => console.log(err));
+        });
+
       setTimeout(() => {
         window.location.href = "/";
       }, 1000);
     } else {
-      console.log("Not found data");
+      console.log("Google login failed: No data");
     }
-    console.log("Login Successful: ", credentialResponse);
   };
 
   const onGoogleError = (err) => {
@@ -122,7 +118,7 @@ const LoginPage = () => {
           <Formik
             initialValues={{ email: "", password: "" }}
             validationSchema={LoginSchema}
-            onSubmit={handleLogin} // Use AuthContext's login function here
+            onSubmit={handleLogin}
           >
             {({ isSubmitting }) => (
               <Form>

@@ -15,21 +15,13 @@ import {
 } from "@chakra-ui/react";
 import { FaSun, FaMoon, FaBars } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const navigation = useNavigate();
-  const [user, setUser] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  useEffect(() => {
-    const userId = sessionStorage.getItem("loginUserId");
-
-    if (userId) {
-      setUser(userId);
-    }
-  }, []);
+  const { user, setUser } = useAuth();
 
   const handleLogout = () => {
     sessionStorage.clear();
@@ -120,7 +112,7 @@ const Navbar = () => {
             />
             {user ? (
               <>
-                <Text fontWeight="bold">Welcome, {user}</Text>
+                <Text fontWeight="bold">Welcome, {user.name}</Text>
                 <Button
                   colorScheme="red"
                   variant="outline"
