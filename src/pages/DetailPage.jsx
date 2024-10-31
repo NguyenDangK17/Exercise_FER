@@ -13,10 +13,59 @@ import {
   FormControl,
   FormLabel,
   useToast,
+  Flex,
+  Avatar,
 } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
+import moment from "moment/moment";
+
+const StarRating = ({ rating, setRating }) => {
+  const handleClick = (newRating) => {
+    setRating(newRating);
+  };
+
+  return (
+    <Flex ml={3}>
+      {[...Array(5)].map((_, index) => (
+        <Box
+          key={index}
+          cursor="pointer"
+          color={index < rating ? "yellow.500" : "gray.300"}
+          onClick={() => handleClick(index + 1)}
+        >
+          ★
+        </Box>
+      ))}
+    </Flex>
+  );
+};
+
+const FeedbackCard = ({ rating, author, date, comment }) => {
+  return (
+    <Box border="none" borderColor="gray.200" borderRadius="md" p={4} mb={4}>
+      <Flex alignItems="start">
+        <Avatar display="ab" />
+        <Box ml={4} lineHeight={0.5}>
+          <Text color="yellow.400">
+            {"★".repeat(rating)}
+            {"☆".repeat(5 - rating)}
+          </Text>
+          <Flex alignItems="center" mt={4}>
+            <Text fontWeight="bold" mr={2}>
+              {author}
+            </Text>
+            <Text color="gray.500" fontSize={14}>
+              {moment(date).format("MMMM D, YYYY")}
+            </Text>
+          </Flex>
+          <Text mt={4}>{comment}</Text>
+        </Box>
+      </Flex>
+    </Box>
+  );
+};
 
 export default function DetailPage() {
   const { id } = useParams();
@@ -26,6 +75,11 @@ export default function DetailPage() {
   const [submittedFeedback, setSubmittedFeedback] = useState(false);
   const toast = useToast();
   const [orchidt, setOrchidt] = useState(null);
+
+  const [feedbackData, setFeedbackData] = useState({
+    comment: "",
+    rating: 0,
+  });
 
   useEffect(() => {
     const fetchOrchid = async () => {
@@ -56,7 +110,7 @@ export default function DetailPage() {
   const userFeedback = orchidt.feedbacks?.find((f) => f.authorId === user?.id);
 
   const handleFeedbackSubmit = async () => {
-    if (!feedback.trim()) {
+    if (!feedbackData.comment.trim()) {
       toast({
         title: "Feedback cannot be empty",
         status: "error",
@@ -67,10 +121,10 @@ export default function DetailPage() {
     }
 
     const newFeedback = {
-      rating: 5,
+      rating: feedbackData.rating,
       authorId: user.id,
       author: user.name,
-      comment: feedback,
+      comment: feedbackData.comment,
       date: new Date().toISOString(),
     };
 
@@ -137,7 +191,6 @@ export default function DetailPage() {
         />
         <Box w="50%" borderWidth="1px" borderRadius="lg" overflow="hidden">
           <Box p={6}>
-            {/* Orchid details */}
             <Box display="flex" alignItems="baseline">
               <Box
                 color="gray.500"
@@ -203,7 +256,7 @@ export default function DetailPage() {
       </VStack>
 
       {/* Feedback Section */}
-      {user ? (
+      {/* {user ? (
         userFeedback || submittedFeedback ? (
           <Box mt={10} p={5} borderWidth="1px" borderRadius="lg">
             <Text fontWeight="bold" fontSize="lg" color="gray.600">
@@ -231,7 +284,77 @@ export default function DetailPage() {
         <Text mt={10} color="red.500" fontSize="lg">
           Please log in to submit feedback.
         </Text>
-      )}
+      )} */}
+
+      {/*TEST FEEDBACK LIST*/}
+      <Flex gap={6} py="30px">
+        <Box w="50%">
+          <Text fontSize="24px" fontWeight="500">
+            Rating & Review
+          </Text>
+          {orchidt.feedbacks.length === 0 ? (
+            <Text>There is no review yet</Text>
+          ) : (
+            orchidt.feedbacks.map((fback, index) => (
+              <FeedbackCard key={index} {...fback} />
+            ))
+          )}
+        </Box>
+        <Box w="50%">
+          <Text fontSize="24px" fontWeight="500">
+            Review this product
+          </Text>
+          {user ? (
+            userFeedback || submittedFeedback ? (
+              <Box mt={10} p={5} borderWidth="1px" borderRadius="lg">
+                <Text fontWeight="bold" fontSize="lg" color="gray.600">
+                  You have already submitted feedback for this orchid.
+                </Text>
+                <Text mt={2}>{userFeedback?.feedback || feedback}</Text>
+              </Box>
+            ) : (
+              <>
+                <FormControl id="review">
+                  <FormLabel
+                    display="flex"
+                    alignItems="baseline"
+                    color="gray.500"
+                  >
+                    Your rating:
+                    <StarRating
+                      rating={feedbackData.rating}
+                      setRating={(rating) =>
+                        setFeedbackData((prev) => ({ ...prev, rating }))
+                      }
+                    />
+                  </FormLabel>
+                  <FormLabel>Your review</FormLabel>
+                  <Textarea
+                    placeholder="Write your review here..."
+                    value={feedbackData.comment}
+                    onChange={(e) => {
+                      setFeedbackData((pre) => {
+                        return { ...pre, comment: e.target.value };
+                      });
+                    }}
+                  />
+                </FormControl>
+                <Button
+                  mt={2}
+                  colorScheme="teal"
+                  onClick={handleFeedbackSubmit}
+                >
+                  Submit
+                </Button>
+              </>
+            )
+          ) : (
+            <Text mt={10} color="red.500" fontSize="lg">
+              Please log in to submit feedback.
+            </Text>
+          )}
+        </Box>
+      </Flex>
     </Box>
   );
 }

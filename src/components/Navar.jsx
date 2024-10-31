@@ -12,6 +12,7 @@ import {
   DrawerOverlay,
   DrawerContent,
   useDisclosure,
+  Avatar,
 } from "@chakra-ui/react";
 import { FaSun, FaMoon, FaBars } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -122,9 +123,7 @@ const Navbar = () => {
             />
             {user ? (
               <>
-                <Text fontWeight="bold" display={{ base: "none", md: "block" }}>
-                  Welcome, {user.name}
-                </Text>
+                <Avatar src={user.avatar} size="md" />
                 <Button
                   colorScheme="red"
                   variant="outline"
