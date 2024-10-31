@@ -121,9 +121,18 @@ const Navbar = () => {
               display={{ base: "inline-flex", md: "none" }} // Show only on mobile
             />
             {user ? (
-              <Text fontWeight="bold" display={{ base: "none", md: "block" }}>
-                Welcome, {user.name}
-              </Text>
+              <>
+                <Text fontWeight="bold" display={{ base: "none", md: "block" }}>
+                  Welcome, {user.name}
+                </Text>
+                <Button
+                  colorScheme="red"
+                  variant="outline"
+                  onClick={handleLogout}
+                >
+                  Log Out
+                </Button>
+              </>
             ) : (
               <Flex gap={2} display={{ base: "none", md: "flex" }}>
                 <Button

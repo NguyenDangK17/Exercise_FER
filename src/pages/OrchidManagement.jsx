@@ -23,6 +23,7 @@ import {
   Spinner,
   Flex,
   Box,
+  useToast, // Import useToast for notifications
 } from "@chakra-ui/react";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import axios from "axios";
@@ -37,6 +38,7 @@ const OrchidTable = () => {
   const [imageFile, setImageFile] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isEditing, setIsEditing] = useState(false);
+  const toast = useToast(); // Initialize toast
 
   const queryClient = useQueryClient();
 
@@ -49,7 +51,25 @@ const OrchidTable = () => {
   const addOrchidMutation = useMutation(
     (newOrchid) => axios.post(baseUrl, newOrchid),
     {
-      onSuccess: () => queryClient.invalidateQueries("orchids"),
+      onSuccess: () => {
+        queryClient.invalidateQueries("orchids");
+        toast({
+          title: "Orchid Created",
+          description: "The orchid has been successfully created.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      },
+      onError: () => {
+        toast({
+          title: "Error Creating Orchid",
+          description: "There was an error creating the orchid.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      },
     }
   );
 
@@ -58,7 +78,25 @@ const OrchidTable = () => {
     (updatedOrchid) =>
       axios.put(`${baseUrl}/${updatedOrchid.id}`, updatedOrchid),
     {
-      onSuccess: () => queryClient.invalidateQueries("orchids"),
+      onSuccess: () => {
+        queryClient.invalidateQueries("orchids");
+        toast({
+          title: "Orchid Updated",
+          description: "The orchid has been successfully updated.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      },
+      onError: () => {
+        toast({
+          title: "Error Updating Orchid",
+          description: "There was an error updating the orchid.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      },
     }
   );
 
@@ -66,7 +104,25 @@ const OrchidTable = () => {
   const deleteOrchidMutation = useMutation(
     (id) => axios.delete(`${baseUrl}/${id}`),
     {
-      onSuccess: () => queryClient.invalidateQueries("orchids"),
+      onSuccess: () => {
+        queryClient.invalidateQueries("orchids");
+        toast({
+          title: "Orchid Deleted",
+          description: "The orchid has been successfully deleted.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      },
+      onError: () => {
+        toast({
+          title: "Error Deleting Orchid",
+          description: "There was an error deleting the orchid.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      },
     }
   );
 
@@ -77,7 +133,11 @@ const OrchidTable = () => {
   };
 
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this orchid?")) {
+    if (
+      window.confirm(
+        "Are you sure you want to permanently delete this orchid? This action cannot be undone."
+      )
+    ) {
       deleteOrchidMutation.mutate(id);
     }
   };
@@ -100,15 +160,32 @@ const OrchidTable = () => {
   };
 
   const handleSave = async () => {
+    const orchidName = document.getElementById("orchid-name").value;
+    const origin = document.getElementById("orchid-origin").value;
+    const category = document.getElementById("orchid-category").value;
+    const isNatural = document.getElementById("orchid-isNatural").checked;
+
+    // Validate form fields
+    if (!orchidName || !origin || !category) {
+      toast({
+        title: "Missing Fields",
+        description: "Please fill in all required fields.",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
     const uploadedImageUrl = imageFile
       ? await handleImageUpload()
       : selectedOrchid?.image;
 
     const form = {
-      name: document.getElementById("orchid-name").value,
-      origin: document.getElementById("orchid-origin").value,
-      category: document.getElementById("orchid-category").value,
-      isNatural: document.getElementById("orchid-isNatural").checked,
+      orchidName,
+      origin,
+      category,
+      isNatural,
       image: uploadedImageUrl,
     };
 
@@ -141,7 +218,6 @@ const OrchidTable = () => {
               <Tr>
                 <Th>Image</Th>
                 <Th>Name</Th>
-                {/* <Th>Description</Th> */}
                 <Th>Category</Th>
                 <Th>Origin</Th>
                 <Th>Natural</Th>
@@ -155,7 +231,7 @@ const OrchidTable = () => {
                     {orchid.image ? (
                       <img
                         src={orchid.image}
-                        alt={orchid.name}
+                        alt={orchid.orchidName}
                         width="50"
                         height="50"
                       />
@@ -163,8 +239,7 @@ const OrchidTable = () => {
                       "No image"
                     )}
                   </Td>
-                  <Td>{orchid.name}</Td>
-                  {/* <Td>{orchid.description}</Td> */}
+                  <Td>{orchid.orchidName}</Td>
                   <Td>{orchid.category}</Td>
                   <Td>{orchid.origin}</Td>
                   <Td>
@@ -174,7 +249,6 @@ const OrchidTable = () => {
                       <Badge colorScheme="red">Not Natural</Badge>
                     )}
                   </Td>
-
                   <Td>
                     <IconButton
                       icon={<EditIcon />}
@@ -206,16 +280,9 @@ const OrchidTable = () => {
               <FormLabel>Name</FormLabel>
               <Input
                 id="orchid-name"
-                defaultValue={selectedOrchid?.name || ""}
+                defaultValue={selectedOrchid?.orchidName || ""}
               />
             </FormControl>
-            {/* <FormControl mb={4}>
-              <FormLabel>Description</FormLabel>
-              <Input
-                id="orchid-description"
-                defaultValue={selectedOrchid?.description || ""}
-              />
-            </FormControl> */}
             <FormControl mb={4}>
               <FormLabel>Category</FormLabel>
               <Input

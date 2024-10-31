@@ -7,8 +7,9 @@ import Navbar from "./components/Navar";
 import Footer from "./components/Footer";
 import NotFoundPage from "./pages/NotFoundPage";
 import Loader from "./components/Loader";
-import ProtectedRoute from "./components/ProtectedRoute";
+// import ProtectedRoute from "./components/ProtectedRoute";
 import NotAuthorized from "./pages/NotAuthorized";
+import { useAuth } from "./context/AuthContext";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
@@ -18,11 +19,12 @@ const NaturalPage = lazy(() => import("./pages/NaturalPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const SignupPage = lazy(() => import("./pages/SignupPage"));
 const OrchidTable = lazy(() => import("./pages/OrchidManagement"));
-const AdminPage = lazy(() => import("./pages/AdminPage"));
+const ProtectedRoute = lazy(() => import("./components/ProtectedRoute"));
 
 function App() {
   const queryClient = new QueryClient();
-  const user = sessionStorage.getItem("roleUser");
+  const { user } = useAuth();
+
   return (
     <>
       <Suspense fallback={<Loader />}>

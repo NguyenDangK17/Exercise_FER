@@ -39,11 +39,17 @@ const LoginPage = () => {
   const handleShowClick = () => setShowPassword(!showPassword);
 
   const handleLogin = async (values, { setSubmitting }) => {
-    const result = await login(values);
-    if (result.success) {
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 1000);
+    const { success, user } = await login(values);
+    if (success) {
+      if (user.role === "admin") {
+        setTimeout(() => {
+          window.location.href = "/admin";
+        }, 1000);
+      } else {
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1000);
+      }
     }
     setSubmitting(false);
   };

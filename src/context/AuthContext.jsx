@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
       if (user) {
         setUser(user);
         sessionStorage.setItem("loginUserId", JSON.stringify(user));
-        return { success: true };
+        return { success: true, user };
       } else {
         setLoginError("Username or password is incorrect.");
         return { success: false };
