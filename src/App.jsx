@@ -7,7 +7,6 @@ import Navbar from "./components/Navar";
 import Footer from "./components/Footer";
 import NotFoundPage from "./pages/NotFoundPage";
 import Loader from "./components/Loader";
-// import ProtectedRoute from "./components/ProtectedRoute";
 import NotAuthorized from "./pages/NotAuthorized";
 import { useAuth } from "./context/AuthContext";
 
@@ -18,7 +17,8 @@ const DetailPage = lazy(() => import("./pages/DetailPage"));
 const NaturalPage = lazy(() => import("./pages/NaturalPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const SignupPage = lazy(() => import("./pages/SignupPage"));
-const OrchidTable = lazy(() => import("./pages/OrchidManagement"));
+const AdminPage = lazy(() => import("./pages/OrchidManagement"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const ProtectedRoute = lazy(() => import("./components/ProtectedRoute"));
 
 function App() {
@@ -39,12 +39,13 @@ function App() {
           <Route path="/natural" element={<NaturalPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route
             path="/admin"
             element={
               <ProtectedRoute user={user}>
                 <QueryClientProvider client={queryClient}>
-                  <OrchidTable />
+                  <AdminPage />
                 </QueryClientProvider>
               </ProtectedRoute>
             }

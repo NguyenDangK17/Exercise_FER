@@ -42,7 +42,7 @@ const StarRating = ({ rating, setRating }) => {
   );
 };
 
-const FeedbackCard = ({ rating, author, date, comment }) => {
+const FeedbackCard = ({ rating, author, date, comment, onDelete }) => {
   return (
     <Box border="none" borderColor="gray.200" borderRadius="md" p={4} mb={4}>
       <Flex alignItems="start">
@@ -59,6 +59,12 @@ const FeedbackCard = ({ rating, author, date, comment }) => {
             <Text color="gray.500" fontSize={14}>
               {moment(date).format("MMMM D, YYYY")}
             </Text>
+            {/* Delete button only shown for feedback from logged-in user */}
+            {onDelete && (
+              <Button size="sm" colorScheme="red" ml={4} onClick={onDelete}>
+                Delete
+              </Button>
+            )}
           </Flex>
           <Text mt={4}>{comment}</Text>
         </Box>
@@ -169,6 +175,45 @@ export default function DetailPage() {
     }
   };
 
+  // Function to handle feedback deletion
+  const handleFeedbackDelete = async (feedbackId) => {
+    try {
+      const updatedFeedbacks = orchidt.feedbacks.filter(
+        (feedback) => feedback.authorId !== feedbackId
+      );
+
+      const updatedOrchid = {
+        ...orchidt,
+        feedbacks: updatedFeedbacks,
+      };
+
+      // Send the updated orchid data via PUT request
+      const response = await axios.put(
+        `https://6693578bc6be000fa07af327.mockapi.io/orchid/${id}`,
+        updatedOrchid,
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      // Update local state with the response data
+      setOrchidt(response.data);
+
+      toast({
+        title: "Feedback deleted!",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: "Error deleting feedback",
+        description: error.message,
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+  };
+
   return (
     <Box p={10}>
       <Button mb={5} mt={-10} onClick={() => navigate("/natural")}>
@@ -256,37 +301,6 @@ export default function DetailPage() {
       </VStack>
 
       {/* Feedback Section */}
-      {/* {user ? (
-        userFeedback || submittedFeedback ? (
-          <Box mt={10} p={5} borderWidth="1px" borderRadius="lg">
-            <Text fontWeight="bold" fontSize="lg" color="gray.600">
-              You have already submitted feedback for this orchid.
-            </Text>
-            <Text mt={2}>{userFeedback?.feedback || feedback}</Text>
-          </Box>
-        ) : (
-          <Box mt={10} p={5} borderWidth="1px" borderRadius="lg">
-            <FormControl>
-              <FormLabel>Submit Your Feedback</FormLabel>
-              <Textarea
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                placeholder="Write your feedback here..."
-                size="sm"
-              />
-              <Button mt={4} colorScheme="teal" onClick={handleFeedbackSubmit}>
-                Submit Feedback
-              </Button>
-            </FormControl>
-          </Box>
-        )
-      ) : (
-        <Text mt={10} color="red.500" fontSize="lg">
-          Please log in to submit feedback.
-        </Text>
-      )} */}
-
-      {/*TEST FEEDBACK LIST*/}
       <Flex gap={6} py="30px">
         <Box w="50%">
           <Text fontSize="24px" fontWeight="500">
@@ -296,7 +310,15 @@ export default function DetailPage() {
             <Text>There is no review yet</Text>
           ) : (
             orchidt.feedbacks.map((fback, index) => (
-              <FeedbackCard key={index} {...fback} />
+              <FeedbackCard
+                key={index}
+                {...fback}
+                onDelete={
+                  fback.authorId === user?.id
+                    ? () => handleFeedbackDelete(fback.authorId)
+                    : null
+                }
+              />
             ))
           )}
         </Box>
@@ -308,7 +330,7 @@ export default function DetailPage() {
             userFeedback || submittedFeedback ? (
               <Box mt={10} p={5} borderWidth="1px" borderRadius="lg">
                 <Text fontWeight="bold" fontSize="lg" color="gray.600">
-                  You have already submitted feedback for this orchid.
+                  You have already submitted feedback for this product.
                 </Text>
                 <Text mt={2}>{userFeedback?.feedback || feedback}</Text>
               </Box>

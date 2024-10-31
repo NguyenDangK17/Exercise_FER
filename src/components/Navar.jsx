@@ -48,6 +48,14 @@ const Navbar = () => {
         <Flex justify="space-between" align="center" w="100%">
           {/* Logo and primary navigation */}
           <Flex align="center">
+            <IconButton
+              aria-label="Open Menu"
+              icon={<FaBars />}
+              onClick={onOpen}
+              display={{ base: "inline-flex", md: "none" }}
+              mr={2}
+              _hover={{ border: "none" }}
+            />
             <svg
               viewBox="0 0 512 512"
               xmlns="http://www.w3.org/2000/svg"
@@ -64,6 +72,7 @@ const Navbar = () => {
                 ></path>
               </g>
             </svg>
+
             <Flex
               ml={8}
               as="nav"
@@ -115,19 +124,19 @@ const Navbar = () => {
               isRound
               size="md"
             />
-            <IconButton
-              aria-label="Open Menu"
-              icon={<FaBars />}
-              onClick={onOpen}
-              display={{ base: "inline-flex", md: "none" }} // Show only on mobile
-            />
             {user ? (
               <>
-                <Avatar src={user.avatar} size="md" />
+                <Avatar
+                  src={user.avatar}
+                  size="md"
+                  onClick={() => navigation("/profile")}
+                  cursor="pointer"
+                />
                 <Button
                   colorScheme="red"
                   variant="outline"
                   onClick={handleLogout}
+                  display={{ base: "none", md: "inline-flex" }}
                 >
                   Log Out
                 </Button>
@@ -154,7 +163,7 @@ const Navbar = () => {
       </Box>
 
       {/* Drawer for mobile navigation */}
-      <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
+      <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent>
           <DrawerHeader borderBottomWidth="1px">Menu</DrawerHeader>
