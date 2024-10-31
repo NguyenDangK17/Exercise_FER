@@ -1,433 +1,219 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React from "react";
 import {
   Box,
-  Badge,
-  Image,
-  SimpleGrid,
   Button,
-  Container,
-  InputGroup,
-  Input,
-  InputRightElement,
-  VStack,
-  Collapse,
-  GridItem,
   Flex,
-  ButtonGroup,
-  IconButton,
-  Checkbox,
+  Heading,
+  Input,
+  Text,
+  VStack,
+  Divider,
+  Icon,
+  SimpleGrid,
+  useColorModeValue,
 } from "@chakra-ui/react";
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  SearchIcon,
-  StarIcon,
-} from "@chakra-ui/icons";
-import axios from "axios";
-import ReactPaginate from "react-paginate";
-import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGrip, faList } from "@fortawesome/free-solid-svg-icons";
-import { debounce } from "lodash";
+import { FaShoppingCart, FaStar, FaHeart } from "react-icons/fa";
 
-import "../css/pagination.css";
-
-const baseUrl = "https://6693578bc6be000fa07af327.mockapi.io/orchid";
-
-export default function HomePage() {
-  const navigate = useNavigate();
-  const [orchids, setOrchids] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const [isCategoryFilterOpen, setIsCategoryFilterOpen] = useState(true);
-  const [isMaterialFilterOpen, setIsMaterialFilterOpen] = useState(true);
-  const [isColorFilterOpen, setIsColorFilterOpen] = useState(true);
-
-  const [layout, setLayout] = useState("grid");
-  const [layoutChange, setLayoutChange] = useState(false);
-  const [opacity, setOpacity] = useState(1);
-  const [page, setPage] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(12);
-  const [filters, setFilters] = useState({
-    categories: [],
-    origin: [],
-    colors: [],
-  });
-
-  useEffect(() => {
-    const fetchOrchid = async () => {
-      try {
-        const res = await axios.get(baseUrl);
-        setOrchids(res.data);
-        console.log("Fetched orchids successfully");
-      } catch (err) {
-        console.error("Failed to fetch orchids:", err.message);
-      }
-    };
-    fetchOrchid();
-  }, []);
-
-  const getUniqueCategories = () => {
-    const uniqueCategories = new Set(orchids.map((orchid) => orchid.category));
-    return Array.from(uniqueCategories);
-  };
-
-  const getUniqueOrigins = () => {
-    const uniqueOrigins = new Set(orchids.map((orchid) => orchid.origin));
-    return Array.from(uniqueOrigins);
-  };
-
-  const getUniqueColors = () => {
-    const uniqueColors = new Set(orchids.map((orchid) => orchid.color));
-    return Array.from(uniqueColors);
-  };
-
-  const filteredOrchids = useMemo(() => {
-    return orchids.filter((product) => {
-      if (
-        filters.categories.length > 0 &&
-        !filters.categories.includes(product.category)
-      ) {
-        return false;
-      }
-      if (
-        filters.origin.length > 0 &&
-        !filters.origin.includes(product.origin)
-      ) {
-        return false;
-      }
-      if (
-        filters.colors.length > 0 &&
-        !filters.colors.includes(product.color)
-      ) {
-        return false;
-      }
-      return (
-        !searchTerm ||
-        product.orchidName.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    });
-  }, [orchids, filters, searchTerm]);
-
-  const totalResults = filteredOrchids.length;
-  const totalPages = useMemo(
-    () => Math.ceil(totalResults / itemsPerPage),
-    [totalResults, itemsPerPage]
-  );
-  const displayedProducts = useMemo(
-    () => filteredOrchids.slice(page * itemsPerPage, (page + 1) * itemsPerPage),
-    [filteredOrchids, page, itemsPerPage]
-  );
-
-  // Debounce the search input to reduce re-renders
-  const debouncedSetSearchTerm = useCallback(debounce(setSearchTerm, 300), []);
-
-  const handleSearchChange = (e) => {
-    debouncedSetSearchTerm(e.target.value);
-  };
-
-  // Memoize handler functions to prevent re-renders
-  const handleFilterChange = useCallback((type, value) => {
-    setFilters((prevFilters) => {
-      const newFilters = { ...prevFilters };
-      const index = newFilters[type].indexOf(value);
-      if (index > -1) {
-        newFilters[type].splice(index, 1);
-      } else {
-        newFilters[type].push(value);
-      }
-      return newFilters;
-    });
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
-
-  const handlePageChange = useCallback((event) => {
-    setPage(event.selected);
-    scrollToTop();
-  }, []);
-
-  useEffect(() => {
-    if (layoutChange) {
-      setOpacity(0);
-      const timer = setTimeout(() => {
-        setOpacity(1);
-        setLayoutChange(false);
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [layoutChange]);
-
-  const handleLayoutChange = (newLayout) => {
-    if (layout !== newLayout) {
-      setLayoutChange(true);
-      setTimeout(() => {
-        setLayout(newLayout);
-        setItemsPerPage(newLayout === "grid" ? 12 : 10);
-      }, 500);
-    }
-  };
+const LandingPage = () => {
+  const bg = useColorModeValue("gray.50", "gray.800");
+  const cardBg = useColorModeValue("white", "gray.700");
+  const textColor = useColorModeValue("gray.600", "gray.300");
+  const footerBg = useColorModeValue("teal.500", "teal.700");
+  const iconColor = useColorModeValue("blue.400", "blue.200");
 
   return (
-    <Container maxW="90vw" mt={10}>
-      <SimpleGrid columns={{ base: 1, md: 4 }} spacing={8}>
-        <Box p={4}>
-          <InputGroup mb={5}>
-            <Input
-              placeholder="Search Orchid..."
-              onChange={handleSearchChange}
-            />
-            <InputRightElement>
-              <SearchIcon />
-            </InputRightElement>
-          </InputGroup>
-          <VStack align="start">
-            <Button
-              width="100%"
-              justifyContent="space-between"
-              bg="none"
-              fontSize="xl"
-              rightIcon={
-                isCategoryFilterOpen ? <ChevronDownIcon /> : <ChevronUpIcon />
-              }
-              onClick={() => setIsCategoryFilterOpen(!isCategoryFilterOpen)}
-            >
-              Category
+    <Box>
+      {/* Hero Section */}
+      <Box
+        bgImage="url('https://sundanceorchids.com/wp-content/uploads/2016/09/orchid-header.jpg')"
+        bgSize="cover"
+        h="500px"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        textAlign="center"
+        color="white"
+        mt={-10}
+      >
+        <VStack spacing={4}>
+          <Heading size="2xl" color="teal.300">
+            Welcome to My Online Shop
+          </Heading>
+          <Text
+            fontSize="xl"
+            color={useColorModeValue("blackAlpha.800", "gray.300")}
+          >
+            Discover the best products at amazing prices!
+          </Text>
+          <Button colorScheme="teal" size="lg">
+            Shop Now
+          </Button>
+        </VStack>
+      </Box>
+
+      {/* Promotions Section */}
+      <Box p={8} bg={bg}>
+        <Heading size="lg" textAlign="center" mb={6}>
+          Exclusive Deals Just for You!
+        </Heading>
+        <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8}>
+          <Box
+            textAlign="center"
+            p={4}
+            borderWidth="1px"
+            borderRadius="lg"
+            shadow="md"
+            bg={cardBg}
+          >
+            <Icon as={FaHeart} boxSize={8} color="pink.400" />
+            <Heading size="md" mt={4}>
+              New Arrivals
+            </Heading>
+            <Text mt={2} color={textColor}>
+              Check out the latest trends in our collection.
+            </Text>
+            <Button mt={4} colorScheme="teal" size="sm">
+              Explore Now
             </Button>
-            <Collapse in={isCategoryFilterOpen}>
-              <Box
-                display="flex"
-                flexDirection="column"
-                width="100%"
-                lineHeight={10}
-                px={3}
-              >
-                {getUniqueCategories().map((category) => (
-                  <Checkbox
-                    key={category}
-                    isChecked={filters.categories.includes(category)}
-                    onChange={() => handleFilterChange("categories", category)}
-                  >
-                    {category}
-                  </Checkbox>
-                ))}
-              </Box>
-            </Collapse>
-            <Button
-              width="100%"
-              justifyContent="space-between"
-              bg="none"
-              fontSize="xl"
-              rightIcon={
-                isMaterialFilterOpen ? <ChevronDownIcon /> : <ChevronUpIcon />
-              }
-              onClick={() => setIsMaterialFilterOpen(!isMaterialFilterOpen)}
-            >
-              Origin
+          </Box>
+          <Box
+            textAlign="center"
+            p={4}
+            borderWidth="1px"
+            borderRadius="lg"
+            shadow="md"
+            bg={cardBg}
+          >
+            <Icon as={FaStar} boxSize={8} color="yellow.400" />
+            <Heading size="md" mt={4}>
+              Best Sellers
+            </Heading>
+            <Text mt={2} color={textColor}>
+              Don’t miss out on our top-rated products.
+            </Text>
+            <Button mt={4} colorScheme="teal" size="sm">
+              See Best Sellers
             </Button>
-            <Collapse in={isMaterialFilterOpen}>
-              <Box
-                display="flex"
-                flexDirection="column"
-                width="100%"
-                lineHeight={10}
-                px={3}
-              >
-                {getUniqueOrigins().map((origin) => (
-                  <Checkbox
-                    key={origin}
-                    isChecked={filters.origin.includes(origin)}
-                    onChange={() => handleFilterChange("origin", origin)}
-                  >
-                    {origin}
-                  </Checkbox>
-                ))}
-              </Box>
-            </Collapse>
-            <Button
-              width="100%"
-              justifyContent="space-between"
-              bg="none"
-              fontSize="xl"
-              rightIcon={
-                isColorFilterOpen ? <ChevronDownIcon /> : <ChevronUpIcon />
-              }
-              onClick={() => setIsColorFilterOpen(!isColorFilterOpen)}
-            >
-              Color
+          </Box>
+          <Box
+            textAlign="center"
+            p={4}
+            borderWidth="1px"
+            borderRadius="lg"
+            shadow="md"
+            bg={cardBg}
+          >
+            <Icon as={FaShoppingCart} boxSize={8} color={iconColor} />
+            <Heading size="md" mt={4}>
+              Clearance Sale
+            </Heading>
+            <Text mt={2} color={textColor}>
+              Grab your favorite items at unbeatable prices.
+            </Text>
+            <Button mt={4} colorScheme="teal" size="sm">
+              Shop Sale
             </Button>
-            <Collapse in={isColorFilterOpen}>
-              <Box
-                display="flex"
-                flexDirection="column"
-                width="100%"
-                lineHeight={10}
-                px={3}
-              >
-                {getUniqueColors().map((color) => (
-                  <Checkbox
-                    key={color}
-                    isChecked={filters.colors.includes(color)}
-                    onChange={() => handleFilterChange("colors", color)}
-                  >
-                    {color}
-                  </Checkbox>
-                ))}
-              </Box>
-            </Collapse>
-          </VStack>
-        </Box>
-        <GridItem colSpan={3}>
-          <Flex justifyContent="space-between" mb={5}>
-            <ButtonGroup isAttached>
-              <IconButton
-                icon={<FontAwesomeIcon icon={faGrip} />}
-                isActive={layout === "grid"}
-                onClick={() => handleLayoutChange("grid")}
-              />
-              <IconButton
-                icon={<FontAwesomeIcon icon={faList} />}
-                isActive={layout === "list"}
-                onClick={() => handleLayoutChange("list")}
-              />
-            </ButtonGroup>
-          </Flex>
-          <div style={{ transition: "opacity 0.5s", opacity: opacity }}>
-            {layout === "grid" ? (
-              <SimpleGrid columns={3} spacing={5}>
-                {displayedProducts.map((orchid) => (
-                  <Box
-                    key={orchid.id}
-                    maxW="sm"
-                    borderWidth="1px"
-                    borderRadius="lg"
-                    overflow="hidden"
-                    borderColor="teal"
-                  >
-                    <Image
-                      src={orchid.image}
-                      alt={orchid.orchidName}
-                      width="100%"
-                      height="300px"
-                    />
-                    <Box p="5">
-                      <Box
-                        display="flex"
-                        alignItems="baseline"
-                        justifyContent="space-between"
-                      >
-                        <Box
-                          color="gray.500"
-                          fontWeight="semibold"
-                          fontSize="xs"
-                          mr="4"
-                        >
-                          {orchid.category} &bull; {orchid.origin}
-                        </Box>
-                        {orchid.isNatural && (
-                          <Badge borderRadius="full" px="2" colorScheme="teal">
-                            Natural
-                          </Badge>
-                        )}
-                      </Box>
-                      <Box
-                        mt="1"
-                        fontWeight="bold"
-                        as="h2"
-                        lineHeight="tight"
-                        noOfLines={1}
-                      >
-                        {orchid.orchidName}
-                      </Box>
-                      <Box
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="space-between"
-                      >
-                        <Box>
-                          {Array(5)
-                            .fill("")
-                            .map((_, i) => (
-                              <StarIcon
-                                fontSize={14}
-                                ml={0.5}
-                                key={i}
-                                color={
-                                  i < orchid.rating ? "teal.500" : "gray.300"
-                                }
-                              />
-                            ))}
-                        </Box>
-                        <Button
-                          onClick={() => navigate(`/detail/${orchid.id}`)}
-                          variant="link"
-                          color="teal.500"
-                        >
-                          View more
-                        </Button>
-                      </Box>
-                    </Box>
-                  </Box>
-                ))}
-              </SimpleGrid>
-            ) : (
-              <VStack spacing={4} align="stretch">
-                {displayedProducts.map((orchid) => (
-                  <Flex
-                    key={orchid.id}
-                    // p={3}
-                    borderWidth="1px"
-                    borderRadius="lg"
-                    borderColor="teal"
-                    align="center"
-                  >
-                    <Image
-                      src={orchid.image}
-                      alt={orchid.orchidName}
-                      boxSize="90px"
-                      w="20%"
-                      h="20%"
-                      mr={5}
-                    />
-                    <Box flex="1">
-                      <Box fontSize="lg" fontWeight="semibold">
-                        {orchid.orchidName}
-                      </Box>
-                      <Box fontSize="sm" color="gray.600">
-                        {orchid.category} &bull; {orchid.origin}
-                      </Box>
-                    </Box>
-                    <Button
-                      onClick={() => navigate(`/detail/${orchid.id}`)}
-                      variant="link"
-                      color="teal.500"
-                      mr={5}
-                    >
-                      View more
-                    </Button>
-                  </Flex>
-                ))}
-              </VStack>
-            )}
-          </div>
-          <ReactPaginate
-            previousLabel={"Previous"}
-            nextLabel={"Next"}
-            breakLabel={"..."}
-            pageCount={totalPages}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={5}
-            onPageChange={handlePageChange}
-            containerClassName={"pagination"}
-            activeClassName={"active"}
+          </Box>
+        </SimpleGrid>
+      </Box>
+
+      {/* Testimonials Section */}
+      <Box p={8} bg={useColorModeValue("teal.50", "gray.900")}>
+        <Heading size="lg" textAlign="center" mb={6}>
+          What Our Customers Say
+        </Heading>
+        <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8}>
+          <Box
+            textAlign="center"
+            p={6}
+            borderWidth="1px"
+            borderRadius="lg"
+            shadow="md"
+            bg={cardBg}
+          >
+            <Text fontSize="lg" fontStyle="italic">
+              "Absolutely fantastic! The quality is unmatched and the service
+              was impeccable."
+            </Text>
+            <Text mt={4} fontWeight="bold" color={textColor}>
+              - Emily R.
+            </Text>
+          </Box>
+          <Box
+            textAlign="center"
+            p={6}
+            borderWidth="1px"
+            borderRadius="lg"
+            shadow="md"
+            bg={cardBg}
+          >
+            <Text fontSize="lg" fontStyle="italic">
+              "I found exactly what I needed and got it delivered on time.
+              Highly recommend!"
+            </Text>
+            <Text mt={4} fontWeight="bold" color={textColor}>
+              - Michael S.
+            </Text>
+          </Box>
+          <Box
+            textAlign="center"
+            p={6}
+            borderWidth="1px"
+            borderRadius="lg"
+            shadow="md"
+            bg={cardBg}
+          >
+            <Text fontSize="lg" fontStyle="italic">
+              "Great variety and amazing discounts! I’m always coming back for
+              more."
+            </Text>
+            <Text mt={4} fontWeight="bold" color={textColor}>
+              - Sarah L.
+            </Text>
+          </Box>
+        </SimpleGrid>
+      </Box>
+
+      {/* Newsletter CTA */}
+      <Box
+        p={8}
+        bg={useColorModeValue("gray.900", "black")}
+        color="white"
+        textAlign="center"
+      >
+        <Heading size="lg" mb={4}>
+          Subscribe to Our Newsletter
+        </Heading>
+        <Text mb={6}>
+          Get the latest updates on new arrivals, promotions, and exclusive
+          deals!
+        </Text>
+        <Flex justify="center">
+          <Input
+            placeholder="Enter your email"
+            size="lg"
+            width="300px"
+            mr={4}
+            bg="white"
+            color="black"
+            _placeholder={{ color: "gray.500" }}
           />
-        </GridItem>
-      </SimpleGrid>
-    </Container>
+          <Button colorScheme="teal" size="lg">
+            Subscribe
+          </Button>
+        </Flex>
+      </Box>
+
+      {/* Footer */}
+      <Box bg={footerBg} color="white" p={4} textAlign="center">
+        <Divider
+          mb={4}
+          borderColor={useColorModeValue("teal.700", "teal.300")}
+        />
+        <Text fontSize="sm">© 2024 My Online Shop. All rights reserved.</Text>
+      </Box>
+    </Box>
   );
-}
+};
+
+export default LandingPage;

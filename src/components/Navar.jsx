@@ -45,7 +45,8 @@ const Navbar = () => {
         mb={10}
       >
         <Flex justify="space-between" align="center" w="100%">
-          <Flex as="nav" gap={8} align="center" w="100%" ml={8}>
+          {/* Logo and primary navigation */}
+          <Flex align="center">
             <svg
               viewBox="0 0 512 512"
               xmlns="http://www.w3.org/2000/svg"
@@ -62,40 +63,49 @@ const Navbar = () => {
                 ></path>
               </g>
             </svg>
-            <Text
-              onClick={() => navigation("/")}
-              fontWeight="bold"
-              _hover={{ color: "blue.500" }}
-              style={{ cursor: "pointer" }}
+            <Flex
+              ml={8}
+              as="nav"
+              gap={8}
+              align="center"
+              display={{ base: "none", md: "flex" }} // Hide on mobile
             >
-              Home
-            </Text>
-            <Text
-              onClick={() => navigation("/natural")}
-              fontWeight="bold"
-              _hover={{ color: "blue.500" }}
-              style={{ cursor: "pointer" }}
-            >
-              Natural
-            </Text>
-            <Text
-              onClick={() => navigation("/contact")}
-              fontWeight="bold"
-              _hover={{ color: "blue.500" }}
-              style={{ cursor: "pointer" }}
-            >
-              Contact
-            </Text>
-            <Text
-              onClick={() => navigation("/about")}
-              fontWeight="bold"
-              _hover={{ color: "blue.500" }}
-              style={{ cursor: "pointer" }}
-            >
-              About Us
-            </Text>
+              <Text
+                onClick={() => navigation("/")}
+                cursor="pointer"
+                fontWeight="bold"
+                _hover={{ color: "blue.500" }}
+              >
+                Home
+              </Text>
+              <Text
+                onClick={() => navigation("/natural")}
+                cursor="pointer"
+                fontWeight="bold"
+                _hover={{ color: "blue.500" }}
+              >
+                Natural
+              </Text>
+              <Text
+                onClick={() => navigation("/contact")}
+                cursor="pointer"
+                fontWeight="bold"
+                _hover={{ color: "blue.500" }}
+              >
+                Contact
+              </Text>
+              <Text
+                onClick={() => navigation("/about")}
+                cursor="pointer"
+                fontWeight="bold"
+                _hover={{ color: "blue.500" }}
+              >
+                About Us
+              </Text>
+            </Flex>
           </Flex>
 
+          {/* User actions and color mode toggle */}
           <Flex align="center" gap={4}>
             <IconButton
               aria-label="Toggle Dark Mode"
@@ -111,18 +121,11 @@ const Navbar = () => {
               display={{ base: "inline-flex", md: "none" }} // Show only on mobile
             />
             {user ? (
-              <>
-                <Text fontWeight="bold">Welcome, {user.name}</Text>
-                <Button
-                  colorScheme="red"
-                  variant="outline"
-                  onClick={handleLogout}
-                >
-                  Log Out
-                </Button>
-              </>
+              <Text fontWeight="bold" display={{ base: "none", md: "block" }}>
+                Welcome, {user.name}
+              </Text>
             ) : (
-              <>
+              <Flex gap={2} display={{ base: "none", md: "flex" }}>
                 <Button
                   colorScheme="teal"
                   variant="outline"
@@ -136,7 +139,7 @@ const Navbar = () => {
                 >
                   Sign Up
                 </Button>
-              </>
+              </Flex>
             )}
           </Flex>
         </Flex>
@@ -146,45 +149,53 @@ const Navbar = () => {
       <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerHeader>
-            <Text fontSize="lg" fontWeight="bold">
-              Menu
-            </Text>
-          </DrawerHeader>
+          <DrawerHeader borderBottomWidth="1px">Menu</DrawerHeader>
           <DrawerBody>
             <Flex direction="column" gap={4}>
               <Text
-                onClick={() => navigation("/")}
+                onClick={() => {
+                  navigation("/");
+                  onClose();
+                }}
                 fontWeight="bold"
-                style={{ cursor: "pointer" }}
+                cursor="pointer"
               >
                 Home
               </Text>
               <Text
-                onClick={() => navigation("/natural")}
+                onClick={() => {
+                  navigation("/natural");
+                  onClose();
+                }}
                 fontWeight="bold"
-                style={{ cursor: "pointer" }}
+                cursor="pointer"
               >
                 Natural
               </Text>
               <Text
-                onClick={() => navigation("/contact")}
+                onClick={() => {
+                  navigation("/contact");
+                  onClose();
+                }}
                 fontWeight="bold"
-                style={{ cursor: "pointer" }}
+                cursor="pointer"
               >
                 Contact
               </Text>
               <Text
-                onClick={() => navigation("/about")}
+                onClick={() => {
+                  navigation("/about");
+                  onClose();
+                }}
                 fontWeight="bold"
-                style={{ cursor: "pointer" }}
+                cursor="pointer"
               >
                 About Us
               </Text>
             </Flex>
           </DrawerBody>
           <DrawerFooter>
-            <Flex align="center" gap={2}>
+            <Flex align="center" gap={2} w="100%">
               <IconButton
                 aria-label="Toggle Dark Mode"
                 icon={colorMode === "light" ? <FaSun /> : <FaMoon />}
@@ -196,26 +207,35 @@ const Navbar = () => {
                 <Button
                   colorScheme="red"
                   variant="outline"
+                  w="full"
                   onClick={handleLogout}
                 >
                   Log Out
                 </Button>
               ) : (
-                <>
+                <Flex gap={2} w="full">
                   <Button
                     colorScheme="teal"
                     variant="outline"
-                    onClick={() => navigation("/login")}
+                    w="full"
+                    onClick={() => {
+                      navigation("/login");
+                      onClose();
+                    }}
                   >
                     Sign In
                   </Button>
                   <Button
                     colorScheme="teal"
-                    onClick={() => navigation("/signup")}
+                    w="full"
+                    onClick={() => {
+                      navigation("/signup");
+                      onClose();
+                    }}
                   >
                     Sign Up
                   </Button>
-                </>
+                </Flex>
               )}
             </Flex>
           </DrawerFooter>
