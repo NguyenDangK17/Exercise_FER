@@ -15,6 +15,8 @@ import {
   useToast,
   Flex,
   Avatar,
+  Spinner,
+  Center,
 } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
 import { useAuth } from "../context/AuthContext";
@@ -102,12 +104,15 @@ export default function DetailPage() {
   if (!orchidt) {
     return (
       <Box p={10} textAlign="center">
-        <Text fontSize="2xl" color="red.500">
+        {/* <Text fontSize="2xl" color="red.500">
           Orchid not found.
         </Text>
         <Button mt={4} onClick={() => navigate("/natural")}>
           Back to list
-        </Button>
+        </Button> */}
+        <Center>
+          <Spinner size="xl" />
+        </Center>
       </Box>
     );
   }

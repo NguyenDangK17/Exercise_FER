@@ -47,12 +47,13 @@ export default function NaturalPage() {
   const [layoutChange, setLayoutChange] = useState(false);
   const [opacity, setOpacity] = useState(1);
   const [page, setPage] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(12);
+  const [itemsPerPage, setItemsPerPage] = useState(9);
   const [filters, setFilters] = useState({
     categories: [],
     origin: [],
     colors: [],
   });
+  const [showOnlyNatural, setShowOnlyNatural] = useState(false);
 
   useEffect(() => {
     const fetchOrchid = async () => {
@@ -84,6 +85,9 @@ export default function NaturalPage() {
 
   const filteredOrchids = useMemo(() => {
     return orchids.filter((product) => {
+      if (showOnlyNatural && !product.isNatural) {
+        return false;
+      }
       if (
         filters.categories.length > 0 &&
         !filters.categories.includes(product.category)
@@ -107,7 +111,7 @@ export default function NaturalPage() {
         product.orchidName.toLowerCase().includes(searchTerm.toLowerCase())
       );
     });
-  }, [orchids, filters, searchTerm]);
+  }, [orchids, filters, searchTerm, showOnlyNatural]);
 
   const totalResults = filteredOrchids.length;
   const totalPages = useMemo(
@@ -119,14 +123,12 @@ export default function NaturalPage() {
     [filteredOrchids, page, itemsPerPage]
   );
 
-  // Debounce the search input to reduce re-renders
   const debouncedSetSearchTerm = useCallback(debounce(setSearchTerm, 300), []);
 
   const handleSearchChange = (e) => {
     debouncedSetSearchTerm(e.target.value);
   };
 
-  // Memoize handler functions to prevent re-renders
   const handleFilterChange = useCallback((type, value) => {
     setFilters((prevFilters) => {
       const newFilters = { ...prevFilters };
@@ -168,9 +170,14 @@ export default function NaturalPage() {
       setLayoutChange(true);
       setTimeout(() => {
         setLayout(newLayout);
-        setItemsPerPage(newLayout === "grid" ? 12 : 10);
+        setItemsPerPage(newLayout === "grid" ? 9 : 9);
       }, 500);
     }
+  };
+
+  const toggleShowOnlyNatural = () => {
+    setShowOnlyNatural((prev) => !prev);
+    setPage(0); // Reset to the first page on filter change
   };
 
   return (
@@ -296,6 +303,14 @@ export default function NaturalPage() {
                 onClick={() => handleLayoutChange("list")}
               />
             </ButtonGroup>
+            <Button
+              onClick={toggleShowOnlyNatural}
+              colorScheme={showOnlyNatural ? "teal" : "gray"}
+              variant={showOnlyNatural ? "solid" : "outline"}
+              ml={2} // Add spacing from layout buttons
+            >
+              {showOnlyNatural ? "Showing Natural" : "All Orchids"}
+            </Button>
           </Flex>
           <div style={{ transition: "opacity 0.5s", opacity: opacity }}>
             {layout === "grid" ? (
@@ -395,6 +410,13 @@ export default function NaturalPage() {
                       mr={5}
                     />
                     <Box flex="1">
+                      <Box fontSize="lg" fontWeight="semibold">
+                        {orchid.isNatural && (
+                          <Badge borderRadius="full" px="2" colorScheme="teal">
+                            Natural
+                          </Badge>
+                        )}
+                      </Box>
                       <Box fontSize="lg" fontWeight="semibold">
                         {orchid.orchidName}
                       </Box>

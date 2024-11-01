@@ -13,6 +13,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { FaShoppingCart, FaStar, FaHeart } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
   const bg = useColorModeValue("gray.50", "gray.800");
@@ -20,6 +21,8 @@ const LandingPage = () => {
   const textColor = useColorModeValue("gray.600", "gray.300");
   const footerBg = useColorModeValue("teal.500", "teal.700");
   const iconColor = useColorModeValue("blue.400", "blue.200");
+
+  const navigate = useNavigate();
 
   return (
     <Box>
@@ -45,7 +48,11 @@ const LandingPage = () => {
           >
             Discover the best products at amazing prices!
           </Text>
-          <Button colorScheme="teal" size="lg">
+          <Button
+            colorScheme="teal"
+            size="lg"
+            onClick={() => navigate("/natural")}
+          >
             Shop Now
           </Button>
         </VStack>

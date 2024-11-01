@@ -94,7 +94,7 @@ const Navbar = () => {
                 fontWeight="bold"
                 _hover={{ color: "blue.500" }}
               >
-                Natural
+                Product
               </Text>
               <Text
                 onClick={() => navigation("/contact")}
